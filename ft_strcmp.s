@@ -15,7 +15,7 @@ ft_strcmp:
     cmp dl, cl
     jne .difference
     cmp dl, 0
-    je .doneinm 
+    je .done 
     inc rax
     jmp .loop
 
