@@ -26,7 +26,7 @@ ft_read:
     ; Dobbiamo settare errno con il codice d'errore (in valore positivo) e restituire -1.
     neg rax               ; Rende il codice d'errore positivo
     push rax              ; Salva il codice d'errore sullo stack
-    call __errno_location ; Ottiene l'indirizzo della variabile errno
+    call __errno_location wrt ..plt ; Ottiene l'indirizzo della variabile errno
     pop rdx               ; Recupera il codice d'errore dallo stack
     mov [rax], edx        ; Imposta errno con il codice d'errore
     mov rax, -1           ; Imposta il valore di ritorno a -1 per indicare l'errore

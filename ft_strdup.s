@@ -1,32 +1,35 @@
 section .text
 global ft_strdup
-extern malloc         ; Dichiarazione esterna per poter chiamare malloc
-extern ft_strlen      ; Dichiarazione esterna per usare la funzione ft_strlen (già implementata)
-extern ft_strcpy      ; Dichiarazione esterna per usare la funzione ft_strcpy (già implementata)
+extern ft_strlen
+extern malloc
+extern ft_strcpy
 
+; char *ft_strdup(const char *src);
 ft_strdup:
-    cmp rdi, 0           ; Verifica se il puntatore sorgente (stringa da duplicare) è NULL
-    je .error            ; Se sì, salta alla gestione dell'errore
+    ; Controlla se src == NULL
+    cmp rdi, 0
+    je .error
 
-    push rdi             ; Salva il puntatore sorgente sullo stack (ci servirà dopo)
-    call ft_strlen       ; Chiama ft_strlen; l'argomento (la stringa) è in rdi; restituisce la lunghezza in rax
-    pop rsi              ; Recupera il puntatore sorgente dallo stack e lo pone in rsi (source per la copia)
-    add rax, 1           ; Aggiunge 1 alla lunghezza per includere il terminatore nullo ('\0')
-    mov rdi, rax         ; Prepara il parametro per malloc: la dimensione da allocare
-    call malloc          ; Alloca memoria; il puntatore all'area allocata viene restituito in rax
-    test rax, rax        ; Verifica se malloc ha restituito NULL (0)
-    je .error_malloc     ; Se malloc fallisce, salta alla gestione dell'errore per malloc
+    ; Calcola la lunghezza con ft_strlen
+    push rdi        ; Salviamo rdi (src) perché ft_strlen userà rdi come parametro
+    call ft_strlen
+    pop rsi         ; rsi = src
+    ; rax adesso contiene la lunghezza
 
-    ; Ora, in rax c'è il puntatore all'area di memoria allocata e in rsi c'è il puntatore alla stringa originale.
-    mov rdi, rax         ; Prepara il primo parametro per ft_strcpy: destinazione (l'area allocata)
-    ; Il secondo parametro (la sorgente) è già in rsi.
-    call ft_strcpy       ; Copia la stringa dalla sorgente alla destinazione
-    ret                  ; Ritorna il puntatore alla nuova stringa (valore restituito da ft_strcpy)
+    add rax, 1      ; +1 per '\0'
 
-.error:
-    xor rax, rax         ; In caso di errore (ad es. puntatore sorgente NULL), restituisce NULL (0)
+    ; Chiamata a malloc (size_t = rax)
+    mov rdi, rax
+    call malloc wrt ..plt
+    test rax, rax
+    je .error       ; se malloc fallisce, 0
+
+    ; ft_strcpy(dest, src)
+    mov rdi, rax    ; destinazione = ptr allocato
+    ; sorgente = rsi
+    call ft_strcpy  ; rax = dest
     ret
 
-.error_malloc:
-    xor rax, rax         ; Se malloc fallisce, restituisce NULL (0)
+.error:
+    xor rax, rax
     ret
