@@ -39,12 +39,16 @@ int main(void) {
     ssize_t bytes = ft_write(1, write_str, ft_strlen(write_str));
     printf("[ft_write] Bytes scritti: %zd\n", bytes);
 
-    // Test ft_strdup
-    char *original = "Stringa da duplicare!";
-    char *duplicate = ft_strdup(original);
-    printf("[ft_strdup] Originale: '%s'\n", original);
-    printf("[ft_strdup] Duplicato: '%s'\n", duplicate);
-    free(duplicate);
+    char *src = "Ciao, mondo!";
+    char *dup = ft_strdup(src);
+
+    if (!dup)
+        printf("ft_strdup returned NULL\n");
+    else {
+        printf("Original: '%s'\n", src);
+        printf("Duplicate: '%s'\n", dup);
+        free(dup);
+    }
 
     // Test ft_read
     int fd = open("test.txt", O_RDONLY);
