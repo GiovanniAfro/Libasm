@@ -1,32 +1,31 @@
+;ft__strdup.s
+section .data
+
+section .bss
+
 section .text
-global ft_strdup
+global  ft_strdup
+
 extern ft_strlen
-extern malloc
 extern ft_strcpy
+extern malloc
 
 ft_strdup:
-    cmp rdi, 0
-    je .error
+	xor  rax, rax
+	push rdi
+	call ft_strlen
+	inc  rax
+	mov  rdi, rax
+	call malloc wrt ..plt
+	cmp  rax, 0
+	je   end_fail
+	pop  rsi
+	mov  rdi, rax
+	call ft_strcpy
 
-    ; Salva rdi (src) sullo stack per ft_strlen
-    push rdi
-    call ft_strlen
-    ; Ritorna in rax la lunghezza
-    pop rsi             ; rsi = src
-    add rax, 1          ; +1 per '\0'
+	ret
 
-    mov rdi, rax        ; size per malloc
-    call malloc wrt ..plt
-    test rax, rax
-    je .error
+end_fail:
+	xor rax, rax
 
-    mov rdi, rax        ; destinazione = area allocata
-    ; rsi = sorgente (la stringa, rimasta invariata)
-    call ft_strcpy      ; copia
-    ret
-
-.error:
-    xor rax, rax
-    mov rdi, 0
-    ret
-
+	ret
